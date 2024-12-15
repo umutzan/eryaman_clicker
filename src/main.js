@@ -16,8 +16,8 @@ database.sync().then((result) => {
 
     app.use("/data", theRouter);
 
-    app.listen(8080, () => {
-        console.log("listening port 8080");
+    app.listen(8081, () => {
+        console.log("listening port 8081");
     });
 
 }).catch((err) => {

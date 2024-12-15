@@ -2,3 +2,4 @@
 **/.DS_Store
 /.env
 read.txt
+src/database/database.sqlite

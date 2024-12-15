@@ -172,7 +172,7 @@
         // API'den veri almak için fonksiyon
         async function fetchData() {
             try {
-                const response = await fetch('http://localhost:8080/data/money');
+                const response = await fetch('/data/money');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -191,7 +191,7 @@
         // POST isteği gönderen fonksiyon
         async function sendData() {
             try {
-                const response = await fetch('http://localhost:8080/data/feed', {
+                const response = await fetch('/data/feed', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

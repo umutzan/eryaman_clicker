@@ -1,4 +1,13 @@
 {
+  "name": "code",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "nodemon src/main.js"
+  },
+  "author": "umutzan",
+  "license": "MIT",
+  "description": "",
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

@@ -7,6 +7,9 @@
     <title>Dilenci Eryaman</title>
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             margin: 0;
@@ -31,7 +34,7 @@
             animation: glow 2s infinite alternate;
         }
 
-        h4 {
+        h3 {
             margin: 5px 0;
             /* Üst ve alt boşluk 5px, sağ ve sol boşluk 0 */
         }
@@ -66,16 +69,176 @@
             background-color: #ff6f61;
             color: #fff;
         }
+
+        @keyframes shrinkAndFade {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .emoji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            animation: shrinkAndFade 1s forwards;
+            /* 1 saniyelik animasyon */
+            pointer-events: none;
+            /* Emoji tıklanamaz */
+        }
+
+        .text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            /* Yazı boyutu */
+            color: white;
+            /* Yazı rengi */
+            font-weight: bold;
+            animation: shrinkAndFade 6s forwards;
+            /* 1 saniyelik animasyon */
+            pointer-events: none;
+            /* Tıklamayı engeller */
+        }
     </style>
 </head>
 
 <body>
-    <h1>Merhaba,</h1>
-    <h4>Dünyanın en iyi clicker oyununu oynamak için buraya geldiğinizi biliyorum,</h4>
-    <h4>Ancak oyun hala yapım aşamsında.</h4>
+    <h1>Bana Para Ver</h1>
+    <h3 id="para">Para</h3>
+
     <div class="image-container">
         <img src="img/dilenci.png" alt="dilenciyaman">
     </div>
+
+    <div class="button-container">
+        <button id="sendButton">Para Ver</button>
+    </div>
+
+    <script>
+        function showText(message) {
+            // Yeni bir yazı elementi oluştur
+            const text = document.createElement('div');
+            text.textContent = message; // Gelen mesajı yazı olarak ekle
+            text.className = 'text';
+
+            // Yazıyı body'ye ekle
+            document.body.appendChild(text);
+
+            // Animasyon tamamlandıktan sonra elementi kaldır
+            text.addEventListener('animationend', () => {
+                text.remove();
+            });
+        }
+
+        function createRandomEmoji() {
+            const emojiList = ['🍔', '🍕', '🌭', '🍟', '🍩'];; // Rastgele emojilerden birini seç
+            const numberOfEmojis = 80; // Üretilmesini istediğiniz emoji sayısı
+
+            for (let i = 0; i < numberOfEmojis; i++) {
+                const emoji = document.createElement('div');
+                emoji.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+                emoji.className = 'emoji';
+
+                // Rastgele bir pozisyon ayarla
+                emoji.style.top = Math.random() * 100 + 'vh';
+                emoji.style.left = Math.random() * 100 + 'vw';
+
+                // Rastgele bir boyut ayarla
+                const randomSize = Math.random() * 2 + 1; // 1rem ile 3rem arasında
+                emoji.style.fontSize = `${randomSize}rem`;
+
+                // Rastgele bir animasyon süresi
+                const randomDuration = Math.random() * 2 + 3; // 3-5 saniye arası
+                emoji.style.animationDuration = `${randomDuration}s`;
+
+                document.body.appendChild(emoji);
+
+                // Animasyon tamamlandıktan sonra elementi kaldır
+                emoji.addEventListener('animationend', () => {
+                    emoji.remove();
+                });
+            }
+        }
+        // API'den veri almak için fonksiyon
+        async function fetchData() {
+            try {
+                const response = await fetch('http://localhost:8080/data/money');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                const paraElement = document.getElementById('para');
+                if (paraElement) {
+                    paraElement.textContent = `${data.click}`;
+                } else {
+                    console.error("Element with id 'para' not found.");
+                }
+            } catch (error) {
+                console.error('API verisi alınırken hata oluştu:', error);
+            }
+        }
+
+        // POST isteği gönderen fonksiyon
+        async function sendData() {
+            try {
+                const response = await fetch('http://localhost:8080/data/feed', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ para: 'Gönderilen Para Verisi' }) // JSON formatında veri
+                });
+
+                if (!response.ok) {
+                    throw new Error('POST isteği başarısız oldu');
+                }
+
+                const result = await response.json();
+                if (result.status == "zabita") {
+                    // SweetAlert2 ile bildirimi göster
+                    Swal.fire({
+                        title: 'Zabıtalandın!',
+                        text: `Zabıtalar bütün parana el koydu ama sen kaçmayı başardın...`,
+                        imageUrl: './img/sasgin.png', // Proje klasöründen görsel
+                        imageWidth: 150,
+                        imageHeight: 84,
+                        imageAlt: 'Başarılı İkon',
+                        confirmButtonText: 'Dilenmeye Devamet',
+                        timer: 6000, // Otomatik kapanma süresi (ms)
+                        timerProgressBar: true, // Zaman çubuğu
+                        allowOutsideClick: false, // Bildirim dışına tıklanmasını engeller
+
+                    });
+                }
+                if (result.status == "ermamasBurger") {
+                    createRandomEmoji();
+                    showText("Afied!!! Biri Sana Ermamas Burger Verdi.");
+                }
+
+                console.log('Başarılı:', result);
+                fetchData();
+            } catch (error) {
+                console.error('POST isteği sırasında hata oluştu:', error);
+            }
+        }
+
+        // Sayfa yüklendiğinde veri çek
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        // Butona tıklama olayı
+        const sendButton = document.getElementById('sendButton');
+        sendButton.addEventListener('click', sendData);
+    </script>
 
 </body>
 

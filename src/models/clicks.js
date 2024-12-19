@@ -5,7 +5,14 @@ class Clicks extends Model { }
 
 Clicks.init(
     {
+        userName: {
+            type: String,
+            unique: true,
+        },
         click: {
+            type: String,
+        },
+        theBest: {
             type: String,
         },
     },

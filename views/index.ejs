@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eryaman Clicker</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ff6f61, #ffcc33);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-align: center;
+            background: linear-gradient(to right, #ffffff, #ffcc33);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s infinite alternate;
+        }
+
+        h3 {
+            margin: 10px 0;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 250px;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #ffcc33;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff6f61;
+            color: #fff;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="rekor">Eryaman Clicker</h1>
+    <h3 id="para">Oynamaya Başla</h3>
+
+    <div class="image-container">
+        <label for="lname" style="font-size: 1.2rem;">Adınızı Girin:</label>
+        <input type="text" id="lname" name="lname" placeholder="Adınızı yazın...">
+    </div>
+
+    <div class="button-container">
+        <button id="sendButton">Oyna</button>
+    </div>
+
+    <script>
+        document.getElementById('sendButton').addEventListener('click', function () {
+            const name = document.getElementById('lname').value;
+            if (name) {
+                fetch('/data/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: name })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.fire({
+                            title: 'Başarılı!',
+                            text: 'Giriş Yapıldı!',
+                            icon: 'success',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Sayfayı yenile
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: 'Bir şeyler yanlış gitti.',
+                            icon: 'error',
+                            confirmButtonText: 'Tamam'
+                        });
+                    });
+            } else {
+                Swal.fire({
+                    title: 'Hata!',
+                    text: 'Lütfen adınızı girin!',
+                    icon: 'error',
+                    confirmButtonText: 'Tamam'
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

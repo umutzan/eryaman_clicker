@@ -6,7 +6,7 @@ function getRandomInt(max) {
 
 class moneyController {
     async balance(req, res) {
-        await clicks.findOne({ where: { id: 1 } }).then((data) => {
+        await clicks.findOne({ where: { userName: req.cookies.user } }).then((data) => {
             if (data == null) {
                 console.log("null");
                 res.json("null");
@@ -15,13 +15,22 @@ class moneyController {
                 res.json(data);
             }
         })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
     }
 
     async feed(req, res) {
-        await clicks.findOne({ where: { id: 1 } }).then((data) => {
+
+        await clicks.findOne({ where: { userName: req.cookies.user } }).then((data) => {
             if (data) {
 
                 if (getRandomInt(100) == 1) {
+
+                    if(data.click>data.theBest){
+                        data.theBest=data.click;
+                    }
 
                     var newClick = 0;
                     data.click = newClick;
@@ -44,15 +53,14 @@ class moneyController {
 
                 }
 
-
-
-
-
-
             } else {
                 res.status(400);
             }
         })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+            });
 
 
     }

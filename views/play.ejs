@@ -29,7 +29,7 @@
             font-size: 4rem;
             text-align: center;
             background: linear-gradient(to right, #ffffff, #ffcc33);
-            -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: glow 2s infinite alternate;
         }
@@ -109,11 +109,30 @@
             pointer-events: none;
             /* Tıklamayı engeller */
         }
+
+        .logout-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background-color: #ffcc33;
+            color: #000;
+        }
     </style>
 </head>
 
 <body>
-    <h1>Bana Para Ver</h1>
+    <h1 id="rekor">Bana Para Ver</h1>
     <h3 id="para">Para</h3>
 
     <div class="image-container">
@@ -121,16 +140,41 @@
     </div>
 
     <div class="button-container">
-        <button id="sendButton">Para Ver</button>
+        <button id="sendButton">Dilen</button>
     </div>
 
+    <div>
+        <button id="logoutButton" class="logout-button">Çıkış Yap</button>
+    </div>
+
+
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutButton = document.getElementById('logoutButton');
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/data/logout', { method: 'POST' });
+                    if (!response.ok) throw new Error('Çıkış isteği başarısız oldu');
+
+                    window.location.reload();
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Hata',
+                        text: 'Çıkış işlemi sırasında bir hata oluştu.',
+                        icon: 'error',
+                        confirmButtonText: 'Tamam',
+                    });
+                }
+            });
+        });
         function showText(message) {
             // Yeni bir yazı elementi oluştur
             const text = document.createElement('div');
             text.textContent = message; // Gelen mesajı yazı olarak ekle
             text.className = 'text';
-
+            // Rastgele bir pozisyon ayarla
+            text.style.top = Math.random() * 60 + 'vh';
+            text.style.left = Math.random() * 60 + 'vw';
             // Yazıyı body'ye ekle
             document.body.appendChild(text);
 
@@ -213,7 +257,7 @@
                         imageWidth: 150,
                         imageHeight: 84,
                         imageAlt: 'Başarılı İkon',
-                        confirmButtonText: 'Dilenmeye Devamet',
+                        confirmButtonText: 'Dilenmeye Devam Et',
                         timer: 6000, // Otomatik kapanma süresi (ms)
                         timerProgressBar: true, // Zaman çubuğu
                         allowOutsideClick: false, // Bildirim dışına tıklanmasını engeller

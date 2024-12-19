@@ -3,15 +3,27 @@ const clicks = require("../models/clicks.js")
 class userController {
     async add(req, res) {
 
-        clicks.create({ "click": 0 }).then((data) => {
+        await clicks.findOne({ where: { userName: req.body.name } }).then((data) => {
+            res.status(200);
 
-            res.status(200).json(data);
+        })
+            .catch((err) => {
+                clicks.create({ "userName": req.body.name, "click": 0, "theBest": 0 }).then((data) => {
+
+                    res.status(200);
 
 
-        }).catch((err) => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(500).json(err);
+                });
+            });
+
+
+
+
+        res.status(200).json({});
+
 
     }
 

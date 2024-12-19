@@ -4,10 +4,12 @@ class userController {
     async add(req, res) {
 
         await clicks.findOne({ where: { userName: req.body.name } }).then((data) => {
-            res.status(200);
+            if (data) {
 
-        })
-            .catch((err) => {
+                res.status(200);
+
+            } else {
+
                 clicks.create({ "userName": req.body.name, "click": 0, "theBest": 0 }).then((data) => {
 
                     res.status(200);
@@ -17,6 +19,13 @@ class userController {
                     console.log(err);
                     res.status(500).json(err);
                 });
+            }
+            res.status(200);
+
+        })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
             });
 
 

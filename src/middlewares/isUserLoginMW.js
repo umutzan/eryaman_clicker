@@ -3,8 +3,15 @@ const clicks = require("../models/clicks.js")
 class isUserLoginMW {
     async root(req, res, next) {
         await clicks.findOne({ where: { userName: req.cookies.user } }).then((data) => {
+            if (data) {
 
-            res.redirect('/play');
+                res.redirect('/play');
+
+            } else {
+
+                next();
+
+            }
 
         }).catch((err) => {
 
@@ -16,8 +23,12 @@ class isUserLoginMW {
     async play(req, res, next) {
 
         await clicks.findOne({ where: { userName: req.cookies.user } }).then((data) => {
+            if (data) {
+                next();
+            } else {
+                res.redirect('/');
 
-            next();
+            }
 
         }).catch((err) => {
 
